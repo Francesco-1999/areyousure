@@ -2,405 +2,408 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ultima Revisione</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap">
 <style>
-  :root {
-    --bg: #f4f1ec;
-    --paper: #ffffff;
-    --ink: #1d1b19;
-    --muted: #77716a;
-    --line: #e2ddd5;
-    --accent: #3b5bdb;
-    --good: #2f9e5f;
-    --warn: #e08a1e;
-    --bad: #d6402f;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 16px;
-  }
-  main { width: 100%; max-width: 760px; }
-  header { margin-bottom: 14px; }
-  h1 { margin: 0; font-size: clamp(1.6rem, 5vw, 2.3rem); letter-spacing: -0.02em; }
-  h1 span { color: var(--accent); }
-  .sub { color: var(--muted); margin: 4px 0 0; }
-
-  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 14px 0; }
-  .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; text-align: center; }
-  .stat .lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
-  .stat .val { font-size: 1.25rem; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .stat.earn .val { color: var(--good); }
-
-  .brief { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
-  .brief-head { display: flex; align-items: center; gap: 12px; }
-  .avatar { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; font-size: 1.6rem; background: var(--bg); flex-shrink: 0; }
-  .client { font-weight: 700; font-size: 1.1rem; }
-  .job { color: var(--muted); font-size: .9rem; }
-  .temper { margin-left: auto; font-size: .75rem; padding: 4px 10px; border-radius: 99px; background: var(--bg); color: var(--muted); white-space: nowrap; }
-
-  .meters { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-  .meter .top { display: flex; justify-content: space-between; font-size: .85rem; margin-bottom: 6px; }
-  .meter .top b { font-variant-numeric: tabular-nums; }
-  .bar { height: 12px; background: var(--bg); border-radius: 99px; overflow: hidden; }
-  .bar i { display: block; height: 100%; width: 0; border-radius: 99px; transition: width .4s ease, background-color .4s; }
-  #qBar { background: var(--accent); }
-  .fee-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
-  .fee { font-size: .95rem; color: var(--muted); padding: 10px 12px; border-radius: 10px; background: var(--bg); }
-  .fee b { display: block; font-size: 1.15rem; font-variant-numeric: tabular-nums; margin-top: 2px; }
-  .fee.win b { color: var(--good); }
-  .fee.lose b { color: var(--bad); }
-
-  .log { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px; height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-  .bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: .92rem; line-height: 1.4; animation: pop .25s ease both; }
-  .bubble.client { background: var(--bg); align-self: flex-start; border-bottom-left-radius: 4px; }
-  .bubble.me { background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-  .bubble.sys { align-self: center; background: none; color: var(--muted); font-size: .8rem; font-style: italic; }
-  .bubble.fail { background: #fbe4e1; color: var(--bad); align-self: stretch; max-width: 100%; text-align: center; font-weight: 600; }
-  .bubble .gain { font-weight: 700; }
-  @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .shake { animation: shake .4s; }
-  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-
-  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-  button { font: inherit; font-weight: 700; font-size: 1.02rem; padding: 14px; border-radius: 12px; border: none; cursor: pointer; transition: transform .08s, filter .15s, opacity .15s; }
-  button:active { transform: scale(.97); }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  button:not(:disabled):hover { filter: brightness(1.08); }
-  .rev { background: var(--accent); color: #fff; }
-  .ship { background: var(--good); color: #fff; }
-  .keys { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 8px; }
-
-  details { margin-top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
-  summary { cursor: pointer; font-weight: 600; }
-  details li { color: var(--muted); font-size: .9rem; line-height: 1.5; }
-
-  .overlay { position: fixed; inset: 0; background: rgba(29,27,25,.55); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
-  .overlay.show { display: flex; }
-  .modal { background: var(--paper); border-radius: 16px; padding: 24px; max-width: 420px; width: 100%; text-align: center; animation: pop .25s ease both; }
-  .modal h2 { margin: 0 0 6px; }
-  .modal p { color: var(--muted); line-height: 1.5; }
-  .modal .big { font-size: 2.3rem; font-weight: 800; margin: 6px 0; font-variant-numeric: tabular-nums; }
-  .modal button { width: 100%; margin-top: 10px; }
-  .summary { text-align: left; margin: 12px 0; font-size: .88rem; border-top: 1px solid var(--line); }
-  .summary div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); }
-
-  @media (max-width: 520px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .stats .stat:last-child { grid-column: span 2; }
-    .meters { grid-template-columns: 1fr; }
-    .temper { display: none; }
-  }
+:root{--desk:#1d2a40;--ink:#1b1d24;--mut:#6d7280;--line:#e4e6ec;--acc:#2d5bff;--good:#1f9d62;--warn:#e58a14;--bad:#d93a2b;--f:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--desk);color:#fff;font-family:var(--f);min-height:100vh;padding:16px;transition:background 1.2s;overflow-x:hidden}
+body.flash{animation:flash .6s}@keyframes flash{30%{background:#7d1a12}}
+#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#fx span{position:absolute;top:-8%;animation:fall linear infinite;opacity:.55}
+@keyframes fall{to{transform:translate(40px,115vh) rotate(300deg)}}
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:16px}
+h1{margin:0;font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 12px;min-width:92px}
+.chip small{display:block;font-size:.72rem;opacity:.7}.chip b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.chip.month{min-width:150px}.chip .mb{height:5px;border-radius:9px;background:rgba(255,255,255,.18);margin-top:4px;overflow:hidden}
+.chip .mb i{display:block;height:100%;width:0;background:#6ee7a8;transition:width .5s}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
+.sheetwrap{display:flex;justify-content:center;perspective:900px}
+.paper{position:relative;background:#fff;color:var(--ink);width:min(100%,470px);aspect-ratio:1/1.414;border-radius:3px;box-shadow:0 18px 40px rgba(0,0,0,.4);padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transform-origin:50% 60%}
+.paper.fresh{animation:slidein .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes slidein{from{transform:translateY(40px) rotate(2deg);opacity:0}}
+.phead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.phead b{font-size:1.15rem}.phead span{color:var(--mut);font-size:.85rem}
+.who{display:flex;gap:12px;align-items:center}
+.av{width:50px;height:50px;border-radius:12px;display:grid;place-items:center;font-size:1.7rem;background:#eef0f6}
+.who h2{margin:0;font-size:1.15rem}.who p{margin:0;color:var(--mut);font-size:.88rem}
+.art{flex:1;min-height:70px;border-radius:8px;display:grid;place-items:center;position:relative;overflow:hidden}
+.art .big{font-size:3.2rem;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.art .stars{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:.85rem;letter-spacing:2px}
+.gain{position:absolute;top:8px;right:10px;font-weight:800;color:var(--good);opacity:0}
+.gain.go{animation:gain 1.4s ease-out}@keyframes gain{0%{opacity:0;transform:translateY(10px)}20%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+.meter .t{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:5px}
+.bar{height:11px;background:#eceef4;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;border-radius:9px;transition:width .4s,background-color .4s}
+#qBar{background:var(--acc)}
+.fees{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fee{background:#f3f4f8;border-radius:8px;padding:8px 10px;font-size:.8rem;color:var(--mut)}.fee b{display:block;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.fee.w b{color:var(--good)}.fee.l b{color:var(--bad)}
+.stamp{position:absolute;inset:0;display:none;place-items:center;font-size:2.2rem;font-weight:800;color:#fff;text-align:center;line-height:1.15;text-shadow:0 3px 12px rgba(0,0,0,.4)}
+.paper.dead{animation:crumple 1.5s forwards;background:var(--bad)}
+.paper.dead>*:not(.stamp){opacity:.18;transition:opacity .4s}
+.paper.dead .stamp{display:grid}
+@keyframes crumple{0%{transform:translateX(0)}8%{transform:translateX(-12px) rotate(-1deg)}16%{transform:translateX(12px) rotate(1deg)}24%{transform:translateX(-8px)}35%{transform:none;background:var(--bad)}100%{transform:scale(.6) rotate(-9deg) skewX(4deg);clip-path:polygon(4% 8%,30% 0,52% 6%,78% 1%,98% 14%,92% 46%,100% 74%,80% 96%,50% 100%,24% 94%,2% 82%,7% 48%);filter:saturate(1.4) brightness(.9);background:#a82a1f}}
+.mail{background:#fff;color:var(--ink);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-direction:column;min-height:560px}
+.mtop{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f3f5fb;border-bottom:1px solid var(--line);font-weight:700}
+.mtop small{color:var(--mut);font-weight:500}
+.badge{background:var(--acc);color:#fff;border-radius:99px;padding:1px 9px;font-size:.78rem;margin-left:6px}
+.toast{max-height:0;overflow:hidden;background:var(--acc);color:#fff;font-size:.88rem;padding:0 16px;transition:max-height .3s,padding .3s}
+.toast.on{max-height:44px;padding:9px 16px}
+.list{max-height:168px;overflow-y:auto;border-bottom:1px solid var(--line)}
+.row{display:grid;grid-template-columns:14px 1fr auto;gap:8px;padding:9px 16px;font-size:.88rem;cursor:pointer;border-bottom:1px solid #f0f1f5;align-items:center}
+.row:hover{background:#f6f8ff}.row.sel{background:#e9eeff}
+.row .d{width:9px;height:9px;border-radius:50%}.row.un .d{background:var(--acc)}.row.un b{font-weight:800}
+.row b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row em{font-style:normal;color:var(--mut);font-size:.78rem;white-space:nowrap}
+.row.new{animation:newmail 1.2s}@keyframes newmail{0%,50%{background:#cfdcff}}
+.view{flex:1;padding:16px 18px;overflow-y:auto;min-height:140px}
+.view h3{margin:0 0 6px;font-size:1.05rem}.view .meta{color:var(--mut);font-size:.8rem;margin-bottom:12px;line-height:1.5}
+.view p{margin:0;line-height:1.55;font-size:.95rem}
+.acts{padding:12px 16px;border-top:1px solid var(--line);background:#fafbfe;display:flex;flex-direction:column;gap:8px}
+.acts .h{font-size:.8rem;color:var(--mut)}
+button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 14px;cursor:pointer;transition:transform .08s,filter .15s}
+button:active{transform:scale(.97)}button:hover{filter:brightness(1.07)}button:focus-visible{outline:3px solid #9fb6ff;outline-offset:2px}
+.opt{background:#fff;border:1.5px solid var(--line);color:var(--ink);text-align:left;display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;font-weight:600}
+.opt small{display:block;color:var(--mut);font-weight:500}.opt:hover{border-color:var(--acc)}
+.opt .r{font-size:.8rem;border-radius:99px;padding:3px 9px;background:#eef0f6}
+.send{background:var(--acc);color:#fff}.inv{background:var(--good);color:#fff}
+.wait{color:var(--mut);font-size:.9rem;display:flex;gap:6px;align-items:center}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--mut);animation:dot 1s infinite;margin-right:3px}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes dot{50%{transform:translateY(-4px);opacity:.4}}
+.overlay{position:fixed;inset:0;background:rgba(10,12,20,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.overlay.show{display:flex}
+.modal{background:#fff;color:var(--ink);border-radius:16px;padding:24px;max-width:430px;width:100%;text-align:center;animation:slidein .3s both}
+.modal h2{margin:0 0 4px}.modal p{color:var(--mut);line-height:1.5}.modal .bg{font-size:2.3rem;font-weight:800;margin:6px 0;font-variant-numeric:tabular-nums}
+.modal button{width:100%;margin-top:10px}.sum{text-align:left;margin:12px 0;font-size:.88rem;border-top:1px solid var(--line);max-height:34vh;overflow-y:auto}
+.sum div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+#banner{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:15;font-size:clamp(2.2rem,8vw,4.5rem);font-weight:800;opacity:0;text-shadow:0 6px 30px rgba(0,0,0,.45)}
+#banner.on{animation:ban 2.2s}@keyframes ban{0%{opacity:0;transform:scale(.8)}20%,70%{opacity:1;transform:none}100%{opacity:0;transform:scale(1.1)}}
+details{margin-top:16px;background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;font-size:.9rem}summary{cursor:pointer;font-weight:700}details li{line-height:1.55;opacity:.85}
+@media(max-width:860px){.stage{grid-template-columns:1fr}.paper{aspect-ratio:auto;min-height:420px}}
+@media(prefers-reduced-motion:reduce){#fx{display:none}*{animation-duration:.01s!important}}
 </style>
 </head>
 <body>
-<main>
+<div id="fx"></div>
+<div id="banner"></div>
+<div class="app">
   <header>
-    <h1>Ultima <span>Revisione</span></h1>
-    <p class="sub">La bozza è consegnata. Ancora un ritocco… o incassi adesso?</p>
+    <h1>Ultima Revisione</h1>
+    <div class="chips">
+      <div class="chip month"><small id="mLbl">Gennaio</small><b id="mBank">0 €</b><div class="mb"><i id="mBar"></i></div></div>
+      <div class="chip"><small>Anno finora</small><b id="yBank">0 €</b></div>
+      <div class="chip"><small>Record</small><b id="best">0 €</b></div>
+    </div>
   </header>
-
-  <section class="stats">
-    <div class="stat"><div class="lbl">Progetto</div><div class="val" id="round">1/5</div></div>
-    <div class="stat"><div class="lbl">Revisioni</div><div class="val" id="revs">0</div></div>
-    <div class="stat earn"><div class="lbl">Incassato</div><div class="val" id="bank">0 €</div></div>
-    <div class="stat"><div class="lbl">Spese fisse</div><div class="val" id="costs">5.000 €</div></div>
-    <div class="stat"><div class="lbl">Record</div><div class="val" id="best">0 €</div></div>
-  </section>
-
-  <section class="brief" id="brief">
-    <div class="brief-head">
-      <div class="avatar" id="avatar">🍕</div>
-      <div>
-        <div class="client" id="client"></div>
-        <div class="job" id="job"></div>
-      </div>
-      <div class="temper" id="temper"></div>
+  <div class="stage">
+    <div class="sheetwrap">
+      <section class="paper" id="paper">
+        <div class="phead"><b id="clock"></b><span id="wk"></span></div>
+        <div class="who"><div class="av" id="av"></div><div><h2 id="cl"></h2><p id="job"></p><p id="tmp"></p></div></div>
+        <div class="art" id="art"><div class="big" id="artE"></div><div class="stars" id="stars"></div><div class="gain" id="gain"></div></div>
+        <div class="meter"><div class="t"><span>Qualità del progetto</span><b id="qTxt"></b></div><div class="bar"><i id="qBar"></i></div></div>
+        <div class="meter"><div class="t"><span>Rischio che il cliente molli</span><b id="rTxt"></b></div><div class="bar"><i id="rBar"></i></div></div>
+        <div class="fees"><div class="fee w">Se fatturi ora<b id="fee"></b></div><div class="fee l">Se il cliente molla<b id="loss"></b></div></div>
+        <div class="stamp">🗑️<br>Progetto<br>cestinato</div>
+      </section>
     </div>
-    <div class="meters">
-      <div class="meter">
-        <div class="top"><span>Qualità del progetto</span><b id="qTxt">0</b></div>
-        <div class="bar"><i id="qBar"></i></div>
-      </div>
-      <div class="meter">
-        <div class="top"><span>Rischio che il cliente molli</span><b id="rTxt">0%</b></div>
-        <div class="bar"><i id="rBar"></i></div>
-      </div>
-    </div>
-    <div class="fee-row">
-      <div class="fee win">Se consegni ora incassi <b id="fee">0 €</b></div>
-      <div class="fee lose">Se il cliente molla perdi <b id="loss">0 €</b></div>
-    </div>
-  </section>
-
-  <section class="log" id="log"></section>
-
-  <section class="actions">
-    <button class="rev" id="revBtn">✏️ Un'altra revisione</button>
-    <button class="ship" id="shipBtn">📦 Consegna e fattura</button>
-  </section>
-  <div class="keys">Tastiera: Spazio = revisione · C = consegna</div>
-
-  <details>
-    <summary>Come si gioca</summary>
-    <ul>
-      <li>Cinque clienti, un progetto ciascuno. Parti sempre da una bozza già consegnata.</li>
-      <li>Ogni revisione alza la qualità di un valore casuale e quindi il compenso.</li>
-      <li>Ma ogni revisione consuma la pazienza del cliente: prima di ogni ritocco c'è la probabilità mostrata che si stufi e butti via tutto. In quel caso il progetto vale zero.</li>
-      <li>Ogni cliente ha un carattere diverso: alcuni sopportano molte revisioni, altri esplodono presto.</li>
-      <li>Consegna quando vuoi per incassare. Alla fine si conta il totale.</li>
-    </ul>
-  </details>
-</main>
-
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <h2 id="mTitle"></h2>
-    <div class="big" id="mBig"></div>
-    <p id="mText"></p>
-    <div id="mExtra"></div>
-    <button class="rev" id="mBtn"></button>
+    <section class="mail">
+      <div class="mtop"><span>📬 Posta<span class="badge" id="unread">0</span></span><small>studio@tuonome.it</small></div>
+      <div class="toast" id="toast"></div>
+      <div class="list" id="list"></div>
+      <div class="view" id="view"></div>
+      <div class="acts" id="acts"></div>
+    </section>
   </div>
+  <details><summary>Come si gioca</summary><ul>
+    <li>Un anno solare, da Gennaio a Dicembre: ogni mese sono 4 progetti, uno a settimana.</li>
+    <li>Invia la bozza, aspetta la risposta del cliente e apri la mail. Poi scegli: una revisione (leggera, media o audace) oppure invia la fattura e chiudi il progetto.</li>
+    <li>Ogni revisione alza la qualità e il compenso, ma può far perdere la pazienza al cliente: in quel caso il progetto vale zero.</li>
+    <li>Ogni mese devi coprire 5.000 € di spese. Se non ci arrivi, riapri lo studio da Gennaio.</li>
+    <li>A Dicembre si conta il totale dell'anno. Tasti rapidi: Spazio = invia bozza, 1/2/3 = revisioni, F = fattura.</li>
+  </ul></details>
 </div>
+<div class="overlay" id="overlay"><div class="modal"><h2 id="mT"></h2><div class="bg" id="mB"></div><p id="mP"></p><div id="mX"></div><button class="send" id="mBtn"></button></div></div>
 
 <script>
 (() => {
-  const ROUNDS = 5;
-  const RATE = 100; // € per punto qualità
-  const COSTS = 5000; // spese fisse da coprire
-
+  const COSTS = 5000, RATE = 100, WEEKS = 4;
+  const MONTHS = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+  const MEMO = ["⛄","💝","🌷","🐣","🌸","☀️","🏖️","🍉","🍇","🎃","🍂","🎄"];
+  const SEAS = [
+    { desk: "#1d2a40", fx: ["❄️","❄️","✨"], name: "inverno" },
+    { desk: "#1f3a33", fx: ["🌸","🌼","🦋"], name: "primavera" },
+    { desk: "#2b4a5e", fx: ["☀️","🌴","🍉"], name: "estate" },
+    { desk: "#43281f", fx: ["🍂","🍁","🌰"], name: "autunno" }
+  ];
+  const seasonOf = m => SEAS[m === 11 || m < 2 ? 0 : m < 5 ? 1 : m < 8 ? 2 : 3];
   const CLIENTS = [
-    { ico: "🍕", name: "Pizzeria Da Totò", job: "Nuovo menù e insegna", base: 0.06, step: 0.07, temper: "Alla mano" },
-    { ico: "⚖️", name: "Studio Legale Rossi & Figli", job: "Restyling del logo", base: 0.08, step: 0.09, temper: "Formale" },
-    { ico: "🚀", name: "Startup GreenChain", job: "Pitch deck per investitori", base: 0.04, step: 0.12, temper: "Frenetico" },
-    { ico: "🏛️", name: "Assessorato alla Cultura", job: "Identità di un festival", base: 0.03, step: 0.05, temper: "Paziente (e lento)" },
-    { ico: "🍷", name: "Cantina Etna Rosso", job: "Etichetta della nuova annata", base: 0.05, step: 0.08, temper: "Esigente" },
-    { ico: "🏠", name: "Immobiliare Prestige", job: "Sito vetrina", base: 0.10, step: 0.10, temper: "Impaziente" },
-    { ico: "💪", name: "Palestra IronFit", job: "Campagna social di settembre", base: 0.07, step: 0.08, temper: "Energico" },
-    { ico: "🖼️", name: "Museo Civico", job: "Allestimento e segnaletica", base: 0.04, step: 0.06, temper: "Riflessivo" }
+    { ico: "🍕", name: "Pizzeria Da Totò", job: "Nuovo menù e insegna", base: .06, step: .07, temper: "Alla mano" },
+    { ico: "⚖️", name: "Studio Legale Rossi & Figli", job: "Restyling del logo", base: .08, step: .09, temper: "Formale" },
+    { ico: "🚀", name: "Startup GreenChain", job: "Pitch deck per investitori", base: .04, step: .12, temper: "Frenetico" },
+    { ico: "🏛️", name: "Assessorato alla Cultura", job: "Identità di un festival", base: .03, step: .05, temper: "Paziente (e lento)" },
+    { ico: "🍷", name: "Cantina Etna Rosso", job: "Etichetta della nuova annata", base: .05, step: .08, temper: "Esigente" },
+    { ico: "🏠", name: "Immobiliare Prestige", job: "Sito vetrina", base: .10, step: .10, temper: "Impaziente" },
+    { ico: "💪", name: "Palestra IronFit", job: "Campagna social", base: .07, step: .08, temper: "Energico" },
+    { ico: "🖼️", name: "Museo Civico", job: "Allestimento e segnaletica", base: .04, step: .06, temper: "Riflessivo" }
   ];
-
-  const REQUESTS = [
-    "Possiamo fare il logo più grande?",
-    "Mi piace, ma proviamo in blu?",
-    "Mia nipote dice che il font è vecchio.",
-    "Si può rendere più… moderno?",
-    "Togliamo lo spazio bianco, sembra vuoto.",
-    "Il concorrente ha fatto una cosa simile, ma meglio.",
-    "Rimettiamo la versione di prima, ma diversa.",
-    "Deve 'spaccare' di più.",
-    "Il capo ha visto e vuole più colore.",
-    "Aggiungiamo anche il numero di telefono. E il fax.",
-    "Si può fare tutto ma più piccolo?",
-    "Ottimo! Solo una piccola cosa…",
-    "Proviamo con una foto di stock sorridente.",
-    "Ci serve per domani, ma senza fretta."
+  const REQUESTS = ["Possiamo fare il logo più grande?","Mi piace, ma proviamo in blu?","Mia nipote dice che il font è vecchio.","Si può rendere più… moderno?","Togliamo lo spazio bianco, sembra vuoto.","Il concorrente ha fatto una cosa simile, ma meglio.","Rimettiamo la versione di prima, ma diversa.","Deve 'spaccare' di più.","Il capo ha visto e vuole più colore.","Aggiungiamo anche il numero di telefono. E il fax.","Si può fare tutto ma più piccolo?","Ottimo! Solo una piccola cosa…","Proviamo con una foto di stock sorridente."];
+  const ANGRY = ["Sa cosa? Lasciamo perdere. Lo fa mio cugino.","Basta, ci ho ripensato: niente progetto.","Abbiamo deciso di usare un template online.","Troppe versioni, non ci capiamo più. Chiudiamo qui.","Il budget è stato spostato su altro. Mi spiace."];
+  const HAPPY = ["Perfetto, lo mandiamo in stampa! Il pagamento parte a breve.","Bellissimo, grazie. Fattura ricevuta, procediamo.","Esattamente quello che avevo in mente. Saldiamo subito.","Ci piace. Pubblichiamo e paghiamo entro la settimana."];
+  const OPTS = [
+    { ico: "🪶", label: "Ritocco leggero", gm: .6, rm: .55, gain: "Guadagno basso" },
+    { ico: "✏️", label: "Revisione media", gm: 1, rm: 1, gain: "Guadagno medio" },
+    { ico: "🔥", label: "Rifacimento audace", gm: 1.9, rm: 1.7, gain: "Guadagno alto" }
   ];
-  const ANGRY = [
-    "Sa cosa? Lasciamo perdere. Lo fa mio cugino.",
-    "Basta, ci ho ripensato: niente progetto.",
-    "Abbiamo deciso di usare un template online.",
-    "Troppe versioni, non ci capiamo più. Chiudiamo qui.",
-    "Il budget è stato spostato su altro. Mi spiace."
-  ];
-  const HAPPY = [
-    "Perfetto, lo mandiamo in stampa!",
-    "Bellissimo, grazie. Mandi pure la fattura.",
-    "Esattamente quello che avevo in mente.",
-    "Ci piace. Pubblichiamo."
-  ];
-
   const $ = id => document.getElementById(id);
-  const el = {
-    round: $("round"), revs: $("revs"), bank: $("bank"), best: $("best"),
-    avatar: $("avatar"), client: $("client"), job: $("job"), temper: $("temper"),
-    qTxt: $("qTxt"), qBar: $("qBar"), rTxt: $("rTxt"), rBar: $("rBar"), fee: $("fee"), loss: $("loss"),
-    log: $("log"), rev: $("revBtn"), ship: $("shipBtn"), brief: $("brief"),
-    overlay: $("overlay"), mTitle: $("mTitle"), mBig: $("mBig"), mText: $("mText"), mExtra: $("mExtra"), mBtn: $("mBtn")
-  };
-
   const eur = n => n.toLocaleString("it-IT") + " €";
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const p2 = n => String(n).padStart(2, "0");
+  const fmt = d => `${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+  const timers = [];
+  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
 
   let best = 0;
   try { best = parseInt(localStorage.getItem("revisione-best") || "0", 10) || 0; } catch (e) {}
-
   let s;
 
+  // ---------- Suoni ----------
+  let ac;
+  function tone(notes, type = "sine", gap = .13, vol = .12) {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      notes.forEach((f, i) => {
+        const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + i * gap;
+        o.type = type; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + gap + .25);
+        o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + gap + .3);
+      });
+    } catch (e) {}
+  }
+  const sMail = () => tone([988, 1319]);
+  const sGood = () => tone([523, 659, 784, 1047], "triangle", .1);
+  const sBad = () => tone([196, 147, 110, 82], "sawtooth", .16, .1);
+
+  // ---------- Stagione ----------
+  function season() {
+    const S = seasonOf(s.m);
+    document.documentElement.style.setProperty("--desk", S.desk);
+    const fx = $("fx"); fx.innerHTML = "";
+    for (let i = 0; i < 16; i++) {
+      const e = document.createElement("span");
+      e.textContent = pick(S.fx);
+      e.style.cssText = `left:${rand(0, 98)}%;font-size:${rand(14, 30)}px;animation-duration:${rand(9, 20)}s;animation-delay:-${rand(0, 18)}s`;
+      fx.appendChild(e);
+    }
+    const b = $("banner"); b.textContent = `${MEMO[s.m]} ${MONTHS[s.m]}`;
+    b.classList.remove("on"); void b.offsetWidth; b.classList.add("on");
+  }
+
+  // ---------- Partita ----------
   function newGame() {
+    timers.forEach(clearTimeout); timers.length = 0;
+    s = { m: 0, year: 0, months: [] };
+    startMonth();
+  }
+  function startMonth() {
     const pool = CLIENTS.slice();
-    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-    s = { round: 1, bank: 0, clients: pool.slice(0, ROUNDS), history: [] };
-    startProject();
+    for (let i = pool.length - 1; i > 0; i--) { const j = rand(0, i); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    s.pool = pool.slice(0, WEEKS); s.week = 1; s.mBank = 0; s.hist = [];
+    season(); startProject();
   }
-
   function startProject() {
-    s.c = s.clients[s.round - 1];
-    s.quality = rand(8, 14);
-    s.revs = 0;
-    s.over = false;
-    el.log.innerHTML = "";
-    say("sys", `Nuovo incarico: ${s.c.job}`);
-    say("me", `Ecco la bozza! (qualità ${s.quality})`);
-    say("client", "Grazie, la guardo. Intanto… qualche ritocco?");
-    render();
+    s.c = s.pool[s.week - 1];
+    s.quality = rand(8, 12); s.revs = 0; s.over = false; s.phase = "draft"; s.opened = false; s.mails = [];
+    let d = new Date(2026, s.m, [2, 9, 16, 23][s.week - 1] + rand(0, 2), rand(9, 11), rand(0, 59));
+    if (d.getDay() === 6) d.setDate(d.getDate() + 2); else if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+    s.clock = d;
+    const p = $("paper"); p.classList.remove("dead", "fresh"); void p.offsetWidth; p.classList.add("fresh");
+    const m = addMail(false, `Nuovo incarico: ${s.c.job}`, `Buongiorno, siamo ${s.c.name}. Ci serve questo lavoro: ${s.c.job.toLowerCase()}. Aspettiamo la vostra prima bozza. Grazie!`, false);
+    s.sel = m; render();
   }
-
-  // Probability the client gives up on the NEXT revision (revision n = s.revs + 1).
-  // Quadratic growth: base + step' × (n−1)², with step rescaled affinely so every
-  // client lands at 45–60% on the 5th revision and above 75% on the 7th.
+  function tick(min) {
+    s.clock = new Date(s.clock.getTime() + min * 60000);
+    if (s.clock.getHours() >= 19) { s.clock.setDate(s.clock.getDate() + 1); s.clock.setHours(9, rand(0, 40)); }
+  }
+  function addMail(mine, subject, body, unread = !mine) {
+    const m = { id: s.mails.length + 1, mine, subject, body, unread, time: fmt(s.clock), who: mine ? "Tu" : s.c.name, isNew: unread };
+    s.mails.unshift(m); return m;
+  }
   const risk = () => {
-    const stepQ = 0.027 + 0.06 * (s.c.step - 0.05);
-    return Math.min(0.95, s.c.base + stepQ * s.revs * s.revs);
+    const stepQ = .027 + .06 * (s.c.step - .05);
+    return Math.min(.95, s.c.base + stepQ * s.revs * s.revs);
   };
+  const riskOf = o => Math.min(.95, risk() * o.rm);
 
-  function revise() {
-    if (s.over) return;
-    const p = risk();
+  function incoming(m) {
+    s.sel = s.sel; toast(`📩 Nuova mail da ${s.c.name}`); sMail(); render();
+  }
+  function sendDraft() {
+    if (s.phase !== "draft") return;
+    tick(rand(5, 15));
+    s.sel = addMail(true, "Bozza in allegato", "Buongiorno, in allegato la prima bozza. Resto in attesa di un vostro riscontro.");
+    s.phase = "wait"; render();
+    later(() => { tick(rand(12, 35)); reply(false); }, rand(2000, 3400));
+  }
+  function revise(i) {
+    if (s.phase !== "reply" || !s.opened) return;
+    const o = OPTS[i], fail = Math.random() < riskOf(o);
     s.revs++;
-    say("client", pick(REQUESTS));
-    if (Math.random() < p) {
-      s.over = true;
-      const lost = s.quality;
-      say("fail", "💥 " + pick(ANGRY));
-      el.brief.classList.remove("shake"); void el.brief.offsetWidth; el.brief.classList.add("shake");
-      s.quality = 0;
-      s.history.push({ c: s.c, got: 0, revs: s.revs, fail: true });
-      render();
-      setTimeout(() => endProject(false, lost), 1100);
-      return;
-    }
-    // Diminishing returns: revision n is worth 1 / (1 + 0.25·(n−1)) of the roll (5th ≈ half)
-    let gain = Math.max(1, Math.round(rand(2, 12) / (1 + 0.25 * (s.revs - 1))));
-    let note = "";
-    if (Math.random() < 0.1) { gain += rand(8, 14); note = " 💡 Intuizione!"; }
-    s.quality += gain;
-    say("me", `Fatto, nuova versione.<span class="gain"> +${gain} qualità${note}</span>`);
-    render();
+    let gain = Math.max(1, Math.round(rand(2, 12) * o.gm / (1 + .25 * (s.revs - 1))));
+    let bonus = Math.random() < .1;
+    if (bonus) gain += rand(8, 14);
+    tick(rand(8, 25));
+    s.sel = addMail(true, `Revisione v${s.revs + 1} · ${o.label}`, `Buongiorno, ecco la nuova versione con le modifiche richieste. Fatemi sapere!`);
+    s.phase = "wait"; s.opened = false; render();
+    later(() => { tick(rand(15, 50)); fail ? angry() : reply(true, gain, bonus); }, rand(2000, 3400));
   }
-
-  function deliver() {
-    if (s.over) return;
-    s.over = true;
+  function reply(again, gain, bonus) {
+    if (gain) {
+      s.quality += gain; flashGain(`+${gain}${bonus ? " 💡" : ""}`);
+    }
+    const body = again ? pick(REQUESTS) : pick(REQUESTS);
+    addMail(false, `Re: ${s.c.job}`, `Buongiorno, grazie per l'invio. ${body} Aspettiamo vostre.`);
+    s.phase = "reply"; s.opened = false; incoming();
+  }
+  function angry() {
+    s.over = true; s.phase = "end";
+    const lost = s.quality * RATE;
+    addMail(false, "Re: " + s.c.job, pick(ANGRY));
+    s.hist.push({ c: s.c, got: 0, revs: s.revs, fail: true });
+    sBad(); toast(`💥 ${s.c.name} ha annullato tutto`);
+    $("paper").classList.add("dead"); document.body.classList.remove("flash"); void document.body.offsetWidth; document.body.classList.add("flash");
+    s.quality = 0; render();
+    later(() => endProject(false, lost), 2300);
+  }
+  function invoice() {
+    if (s.phase !== "reply" || !s.opened) return;
+    tick(rand(6, 18));
     const got = s.quality * RATE;
-    s.bank += got;
-    s.history.push({ c: s.c, got, revs: s.revs, fail: false });
-    say("client", pick(HAPPY));
-    render();
-    setTimeout(() => endProject(true, got), 600);
+    s.sel = addMail(true, `Fattura · ${eur(got)}`, `Buongiorno, in allegato la fattura per il lavoro concluso (${eur(got)}). Grazie per la collaborazione!`);
+    s.phase = "wait"; s.over = true; render();
+    later(() => {
+      tick(rand(30, 90));
+      s.mBank += got;
+      s.hist.push({ c: s.c, got, revs: s.revs, fail: false });
+      addMail(false, "Pagamento in arrivo", pick(HAPPY));
+      s.phase = "end"; sGood(); toast(`💶 ${s.c.name} ha pagato ${eur(got)}`); render();
+      later(() => endProject(true, got), 1500);
+    }, rand(2000, 3000));
   }
 
-  function endProject(ok, value) {
-    const last = s.round >= ROUNDS;
-    el.mExtra.innerHTML = "";
-    if (ok) {
-      el.mTitle.textContent = "Progetto consegnato ✅";
-      el.mBig.style.color = "var(--good)";
-      el.mBig.textContent = "+" + eur(value);
-      el.mText.textContent = s.revs
-        ? `${s.c.name} ha approvato dopo ${s.revs} ${s.revs === 1 ? "revisione" : "revisioni"}.`
-        : `${s.c.name} ha preso la bozza così com'era.`;
-    } else {
-      el.mTitle.textContent = "Progetto cestinato 🗑️";
-      el.mBig.style.color = "var(--bad)";
-      el.mBig.textContent = "0 €";
-      el.mText.textContent = `${s.c.name} si è stufato alla revisione ${s.revs}. Avevi un progetto da ${eur(value * RATE)}.`;
-    }
-    el.mBtn.textContent = last ? "Chiudi l'anno fiscale" : `Prossimo cliente (${s.round + 1}/${ROUNDS}) →`;
-    el.mBtn.onclick = () => {
-      if (last) return finalScreen();
-      s.round++;
-      hide();
-      startProject();
-    };
-    show();
+  // ---------- Fine progetto / mese / anno ----------
+  function modal(title, big, bigColor, text, extra, btn, fn, cls = "send") {
+    $("mT").textContent = title; $("mB").textContent = big; $("mB").style.color = bigColor;
+    $("mP").textContent = text; $("mX").innerHTML = extra || "";
+    const b = $("mBtn"); b.textContent = btn; b.className = cls; b.onclick = () => { $("overlay").classList.remove("show"); fn(); };
+    $("overlay").classList.add("show"); b.focus();
   }
-
-  function finalScreen() {
-    const record = s.bank > best;
-    if (record) { best = s.bank; try { localStorage.setItem("revisione-best", String(best)); } catch (e) {} }
-    if (s.bank < COSTS) {
-      el.mTitle.textContent = "📉 Studio in rosso";
-      el.mBig.style.color = "var(--bad)";
-      el.mBig.textContent = eur(s.bank);
-      el.mText.textContent = `Le spese fisse erano ${eur(COSTS)}: mancano ${eur(COSTS - s.bank)}. Lo studio chiude. Partita persa.`;
-    } else {
-      el.mTitle.textContent = record ? "🏆 Anno record!" : "Bilancio dell'anno";
-      el.mBig.style.color = "var(--ink)";
-      el.mBig.textContent = eur(s.bank);
-      el.mText.textContent = verdict(s.bank) + (record ? "" : ` Il tuo record è ${eur(best)}.`);
-    }
-    el.mExtra.innerHTML = '<div class="summary">' + s.history.map(h =>
-      `<div><span>${h.c.ico} ${h.c.name} · ${h.revs} rev.</span><b style="color:${h.fail ? "var(--bad)" : "var(--good)"}">${h.fail ? "cestinato" : eur(h.got)}</b></div>`
-    ).join("") + "</div>";
-    el.mBtn.textContent = "Riapri lo studio";
-    el.mBtn.onclick = () => { hide(); newGame(); };
-    render();
-    show();
+  function endProject(ok, v) {
+    const last = s.week >= WEEKS;
+    const txt = ok
+      ? (s.revs ? `${s.c.name} ha approvato dopo ${s.revs} ${s.revs === 1 ? "revisione" : "revisioni"}.` : `${s.c.name} ha preso la bozza così com'era.`)
+      : `${s.c.name} si è stufato alla revisione ${s.revs}. Avevi un progetto da ${eur(v)}.`;
+    modal(ok ? "Progetto incassato ✅" : "Progetto cestinato 🗑️", ok ? "+" + eur(v) : "0 €", ok ? "var(--good)" : "var(--bad)", txt, "",
+      last ? `Chiudi ${MONTHS[s.m]}` : `Settimana ${s.week + 1} di ${WEEKS}`,
+      () => { if (last) endMonth(); else { s.week++; startProject(); } });
   }
-
-  function verdict(n) {
-    if (n >= 20000) return "Agenzia di grido: i clienti fanno la fila.";
-    if (n >= 14000) return "Ottimo anno, lo studio cresce.";
-    if (n >= 9000) return "Anno solido, bollette pagate.";
-    if (n >= 5000) return "Si tira avanti. Magari meno revisioni?";
-    return "Forse era meglio il posto fisso.";
+  function weeksList() {
+    return '<div class="sum">' + s.hist.map(h => `<div><span>${h.c.ico} ${h.c.name} · ${h.revs} rev.</span><b style="color:${h.fail ? "var(--bad)" : "var(--good)"}">${h.fail ? "cestinato" : eur(h.got)}</b></div>`).join("") + "</div>";
   }
-
-  function say(kind, html) {
-    const b = document.createElement("div");
-    b.className = "bubble " + kind;
-    b.innerHTML = html;
-    el.log.appendChild(b);
-    el.log.scrollTop = el.log.scrollHeight;
-  }
-
-  function show() { el.overlay.classList.add("show"); el.mBtn.focus(); }
-  function hide() { el.overlay.classList.remove("show"); }
-
-  function render() {
-    el.round.textContent = `${s.round}/${ROUNDS}`;
-    el.revs.textContent = s.revs;
-    el.bank.textContent = eur(s.bank);
-    el.best.textContent = eur(best);
-    el.avatar.textContent = s.c.ico;
-    el.client.textContent = s.c.name;
-    el.job.textContent = s.c.job;
-    el.temper.textContent = "Carattere: " + s.c.temper;
-
-    el.qTxt.textContent = s.quality;
-    el.qBar.style.width = Math.min(100, s.quality / 1.2) + "%";
-
-    const pct = s.over ? 0 : Math.round(risk() * 100);
-    el.rTxt.textContent = s.over ? "—" : pct + "%";
-    const col = pct >= 40 ? "var(--bad)" : pct >= 20 ? "var(--warn)" : "var(--good)";
-    el.rTxt.style.color = col;
-    el.rBar.style.width = Math.max(pct, 2) + "%";
-    el.rBar.style.backgroundColor = col;
-
-    el.fee.textContent = eur(s.quality * RATE);
-    el.loss.textContent = "−" + eur(s.quality * RATE);
-    el.rev.disabled = s.over;
-    el.ship.disabled = s.over;
-  }
-
-  el.rev.addEventListener("click", revise);
-  el.ship.addEventListener("click", deliver);
-  document.addEventListener("keydown", e => {
-    if (el.overlay.classList.contains("show")) {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.mBtn.click(); }
+  function endMonth() {
+    const ok = s.mBank >= COSTS;
+    if (!ok) {
+      modal("📉 Studio in rosso", eur(s.mBank), "var(--bad)",
+        `A ${MONTHS[s.m]} servivano ${eur(COSTS)} di spese: mancano ${eur(COSTS - s.mBank)}. Lo studio chiude.`, weeksList(), "Riapri lo studio", newGame, "inv");
       return;
     }
-    if (e.key === " " || e.key === "Enter") { e.preventDefault(); revise(); }
-    else if (e.key.toLowerCase() === "c") { deliver(); }
+    s.year += s.mBank; s.months.push({ m: s.m, bank: s.mBank });
+    if (s.m === 11) { finalScreen(); return; }
+    modal(`${MEMO[s.m]} ${MONTHS[s.m]} chiuso`, eur(s.mBank), "var(--good)",
+      `Spese coperte, ti avanzano ${eur(s.mBank - COSTS)}. Totale dell'anno finora: ${eur(s.year)}.`, weeksList(), `Continua con ${MONTHS[s.m + 1]}`,
+      () => { s.m++; startMonth(); });
+  }
+  function finalScreen() {
+    const rec = s.year > best;
+    if (rec) { best = s.year; try { localStorage.setItem("revisione-best", String(best)); } catch (e) {} }
+    const avg = s.year / 12;
+    const v = avg >= 8000 ? "Agenzia di grido: i clienti fanno la fila." : avg >= 6500 ? "Ottimo anno, lo studio cresce." : avg >= 5500 ? "Anno solido, bollette pagate." : "Si tira avanti. Magari meno revisioni?";
+    const list = '<div class="sum">' + s.months.map(x => `<div><span>${MEMO[x.m]} ${MONTHS[x.m]}</span><b>${eur(x.bank)}</b></div>`).join("") + "</div>";
+    modal(rec ? "🏆 Anno record!" : "Bilancio dell'anno fiscale", eur(s.year), "var(--ink)", v + (rec ? "" : ` Il tuo record è ${eur(best)}.`), list, "Riapri lo studio", newGame);
+    render();
+  }
+
+  // ---------- Interfaccia ----------
+  function toast(t) {
+    const e = $("toast"); e.textContent = t; e.classList.add("on");
+    clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), 3200);
+  }
+  function flashGain(t) {
+    const g = $("gain"); g.textContent = t; g.classList.remove("go"); void g.offsetWidth; g.classList.add("go");
+  }
+  function openMail(id) {
+    const m = s.mails.find(x => x.id === id); if (!m) return;
+    s.sel = m; m.unread = false; m.isNew = false;
+    if (s.phase === "reply" && s.mails.find(x => !x.mine) === m) s.opened = true;
+    render();
+  }
+  function render() {
+    const mi = s.m;
+    $("mLbl").textContent = `${MEMO[mi]} ${MONTHS[mi]}`;
+    $("mBank").textContent = `${eur(s.mBank)} / ${eur(COSTS)}`;
+    $("mBar").style.width = Math.min(100, s.mBank / COSTS * 100) + "%";
+    $("yBank").textContent = eur(s.year + (s.over || s.phase === "end" ? 0 : 0));
+    $("best").textContent = eur(best);
+    $("clock").textContent = fmt(s.clock);
+    $("wk").textContent = `${MEMO[mi]} ${MONTHS[mi]} · settimana ${s.week}/${WEEKS}`;
+    $("av").textContent = s.c.ico; $("cl").textContent = s.c.name; $("job").textContent = s.c.job; $("tmp").textContent = "Carattere: " + s.c.temper;
+    const hue = (CLIENTS.indexOf(s.c) * 47 + 200) % 360;
+    $("art").style.background = `linear-gradient(135deg,hsl(${hue} 80% ${88 - Math.min(s.quality, 60) / 3}%),hsl(${(hue + 50) % 360} 85% ${80 - Math.min(s.quality, 60) / 3}%))`;
+    $("artE").textContent = s.c.ico;
+    $("stars").textContent = "★".repeat(Math.min(10, Math.floor(s.quality / 8))) || "·";
+    $("qTxt").textContent = s.quality; $("qBar").style.width = Math.min(100, s.quality / 1.2) + "%";
+    const dead = s.phase === "end";
+    const pct = dead ? 0 : Math.round(risk() * 100);
+    const col = pct >= 40 ? "var(--bad)" : pct >= 20 ? "var(--warn)" : "var(--good)";
+    $("rTxt").textContent = dead ? "—" : pct + "%"; $("rTxt").style.color = col;
+    $("rBar").style.width = Math.max(pct, 2) + "%"; $("rBar").style.backgroundColor = col;
+    $("fee").textContent = eur(s.quality * RATE); $("loss").textContent = "−" + eur(s.quality * RATE);
+
+    const un = s.mails.filter(x => x.unread).length;
+    $("unread").textContent = un; $("unread").style.display = un ? "" : "none";
+    $("list").innerHTML = s.mails.map(m => `<div class="row${m.unread ? " un" : ""}${s.sel === m ? " sel" : ""}${m.isNew ? " new" : ""}" data-id="${m.id}"><span class="d"></span><b>${m.mine ? "Tu → " + s.c.name : m.who} · ${m.subject}</b><em>${m.time}</em></div>`).join("");
+    const m = s.sel;
+    $("view").innerHTML = m ? `<h3>${m.subject}</h3><div class="meta">Da: ${m.mine ? "studio@tuonome.it" : s.c.name}<br>A: ${m.mine ? s.c.name : "studio@tuonome.it"}<br>${m.time}</div><p>${m.body}</p>` : "";
+
+    let a = "";
+    if (s.phase === "draft") a = `<button class="send" data-a="draft">📎 Invia bozza</button>`;
+    else if (s.phase === "wait") a = `<div class="wait"><span class="dots"><i></i><i></i><i></i></span> ${s.c.name} sta leggendo…</div>`;
+    else if (s.phase === "reply" && !s.opened) a = `<div class="h">📩 Hai una nuova mail: aprila dall'elenco per rispondere.</div>`;
+    else if (s.phase === "reply") {
+      a = `<div class="h">Rispondi a ${s.c.name}:</div>` + OPTS.map((o, i) => {
+        const r = Math.round(riskOf(o) * 100);
+        return `<button class="opt" data-a="rev" data-i="${i}"><span>${o.ico}</span><span>${o.label}<small>${o.gain}</small></span><span class="r" style="color:${r >= 40 ? "var(--bad)" : r >= 20 ? "var(--warn)" : "var(--good)"}">rischio ${r}%</span></button>`;
+      }).join("") + `<button class="inv" data-a="inv">🧾 Invia fattura e chiudi · ${eur(s.quality * RATE)}</button>`;
+    } else a = `<div class="h">Progetto chiuso.</div>`;
+    $("acts").innerHTML = a;
+  }
+
+  $("list").addEventListener("click", e => { const r = e.target.closest(".row"); if (r) openMail(+r.dataset.id); });
+  $("acts").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.a === "draft") sendDraft();
+    else if (b.dataset.a === "rev") revise(+b.dataset.i);
+    else if (b.dataset.a === "inv") invoice();
+  });
+  document.addEventListener("keydown", e => {
+    if ($("overlay").classList.contains("show")) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("mBtn").click(); } return; }
+    if (e.key === " ") { e.preventDefault(); sendDraft(); }
+    else if (["1", "2", "3"].includes(e.key)) revise(+e.key - 1);
+    else if (e.key.toLowerCase() === "f") invoice();
   });
 
   newGame();
