@@ -35,7 +35,7 @@ img{display:block;max-width:100%}
 .gdlg .gb button:last-child{background:var(--accent);color:#fff}
 @keyframes popIn{from{transform:scale(.6);opacity:0}}
 .istage{position:absolute;inset:0}
-.idlg{position:absolute;width:190px;background:#f4f3ee;color:#1d2321;border-radius:8px;box-shadow:0 14px 40px #000a;font-size:12px;overflow:hidden;animation:popIn .28s cubic-bezier(.2,1.6,.4,1) both;transition:transform .7s cubic-bezier(.6,0,.4,1),opacity .7s}
+.idlg{position:absolute;width:190px;background:#f4f3ee;color:#1d2321;border-radius:8px;box-shadow:0 10px 24px #0009;font-size:12px;overflow:hidden;will-change:transform,opacity;backface-visibility:hidden}
 .idlg .t{background:#dfe1db;padding:4px 8px;font-size:10px;font-weight:600;color:#59625e}
 .idlg .m{padding:10px 10px 4px;font-weight:700}
 .idlg .b{display:flex;gap:6px;justify-content:flex-end;padding:6px 8px 9px}
@@ -3627,10 +3627,10 @@ function playIntro(){
  let done=false;const T=[];const later=(ms,f)=>T.push(setTimeout(f,ms));
  const MS=['Are you sure?','Sei sicuro?','Davvero?','Vuoi davvero andare?','Ultima possibilità','Are you really sure?','Ci ripensi?','Confermi?'];
  const dl=[];
- for(let i=0;i<18;i++)later(i*85,()=>{const d=el('div','idlg',`<div class="t">Conferma</div><div class="m">${MS[i%MS.length]}</div><div class="b"><span>Sì</span><span>No</span></div>`);d.style.left=rnd(2,82)+'%';d.style.top=rnd(4,80)+'%';d.style.rotate=rnd(-10,10)+'deg';st.appendChild(d);dl.push(d);snd('pop',i%10);});
- later(1750,()=>{snd('suck');dl.forEach(d=>{const r=d.getBoundingClientRect();d.style.transitionDelay=rnd(0,.25)+'s';d.style.transform=`translate(${innerWidth/2-r.left-r.width/2}px,${innerHeight/2-r.top-r.height/2}px) scale(0) rotate(${rnd(-400,400)}deg)`;d.style.opacity='0';});});
+ for(let i=0;i<18;i++)later(i*85,()=>{const d=el('div','idlg',`<div class="t">Conferma</div><div class="m">${MS[i%MS.length]}</div><div class="b"><span>Sì</span><span>No</span></div>`);d.style.left=rnd(2,82)+'%';d.style.top=rnd(4,80)+'%';d.style.rotate=rnd(-10,10)+'deg';d.style.opacity='0';st.appendChild(d);dl.push(d);d.animate([{transform:'scale(.6)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:280,easing:'cubic-bezier(.2,1.6,.4,1)',fill:'forwards'});snd('pop',i%10);});
+ later(1750,()=>{snd('suck');dl.forEach(d=>{const r=d.getBoundingClientRect();d.getAnimations().forEach(a=>a.cancel());d.style.opacity='1';const a=d.animate([{transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1},{transform:`translate(${innerWidth/2-r.left-r.width/2}px,${innerHeight/2-r.top-r.height/2}px) scale(0) rotate(${rnd(-400,400)}deg)`,opacity:0}],{duration:700,delay:rnd(0,250),easing:'cubic-bezier(.6,0,.4,1)',fill:'both'});a.onfinish=()=>d.remove();});later(1100,()=>{dl.forEach(d=>d.remove());dl.length=0;});});
  later(2500,()=>{const f=$('#iflash');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');snd('glitch');for(let k=0;k<3;k++){const r=el('div','iring');r.style.animationDelay=k*.25+'s';st.appendChild(r);}
-  const txt='Are You Sure?';const h=el('h1','ititle');[...txt].forEach((c,i)=>{const s=el('span',c===' '?'sp':c==='?'?'q':'',c===' '?'&nbsp;':c);s.style.setProperty('--i',i);h.appendChild(s);if(c!==' ')later(2500+i*70,()=>snd('thud'));});st.appendChild(h);});
+  dl.forEach(d=>d.remove());dl.length=0;const txt='Are You Sure?';const h=el('h1','ititle');[...txt].forEach((c,i)=>{const s=el('span',c===' '?'sp':c==='?'?'q':'',c===' '?'&nbsp;':c);s.style.setProperty('--i',i);h.appendChild(s);if(c!==' ')later(2500+i*70,()=>snd('thud'));});st.appendChild(h);});
  later(3550,()=>snd('chord'));
  later(3700,()=>{const s=el('div','isub','Un gioco sui dark pattern. E su quanto è difficile andarsene.');st.appendChild(s);requestAnimationFrame(()=>s.classList.add('on'));});
  later(4300,()=>{const b=el('div','ibtns','<button class="go">Inizia</button><button class="how">Come si gioca?</button><button class="no">No</button>');st.appendChild(b);requestAnimationFrame(()=>b.classList.add('on'));
